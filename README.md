@@ -27,7 +27,7 @@ HTML/CSS/JavaScript, JUnit 5
 (to be added)
 
 ## Database
-(ER diagram to be added)
+![ER diagram](er-diagram.png)
 
 ## Tests
 Run: `mvn test`
