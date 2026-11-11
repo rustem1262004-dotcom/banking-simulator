@@ -34,9 +34,14 @@ Run: `mvn test`
 
 ## UI mockups
 ![Login](1%20Login.png)
+![Register](1a%20Register.png)
 ![Accounts](2%20Accounts.png)
+![New Account Dialog](2a%20New%20Account%20Dialog.png)
+![Deposit Withdraw Dialog](2b%20Deposit%20Withdraw%20Dialog.png)
 ![Transfer and History](3%20Transfer%20and%20History.png)
 ![Monthly Report](4%20Monthly%20Report.png)
+![Budget and Categories](5%20Budget%20and%20Categories.png)
+![Admin Panel](6%20Admin%20Panel.png)
 
 ## Roles
 - Customer: own accounts, transfers, history, budget limits, reports
