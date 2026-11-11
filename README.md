@@ -32,5 +32,15 @@ HTML/CSS/JavaScript, JUnit 5
 ## Tests
 Run: `mvn test`
 
+## UI mockups
+![Login](1%20Login.png)
+![Accounts](2%20Accounts.png)
+![Transfer and History](3%20Transfer%20and%20History.png)
+![Monthly Report](4%20Monthly%20Report.png)
+
+## Roles
+- Customer: own accounts, transfers, history, budget limits, reports
+- Admin: view all users and accounts
+
 ## Authors
 Rustem Aitbay, Urgesh Sarbinaz, Zharasbai Nunbek
