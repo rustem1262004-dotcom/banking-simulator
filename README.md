@@ -17,7 +17,7 @@ Java 21, Maven, Spring Boot, Spring Security, Spring Data JPA, MySQL,
 HTML/CSS/JavaScript, JUnit 5
 
 ## How to run
-1. Install Java 17, Maven and MySQL
+1. Install Java 21, Maven and MySQL
 2. Create a database: `banking_simulator`
 3. Set your MySQL login and password in `application.properties`
 4. Run: `mvn spring-boot:run`
