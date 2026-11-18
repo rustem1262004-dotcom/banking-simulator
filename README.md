@@ -13,7 +13,7 @@ No real financial systems or real payment data are used.
 - Monthly income and expense reports
 
 ## Tech stack
-Java 17, Maven, Spring Boot, Spring Security, Spring Data JPA, MySQL,
+Java 21, Maven, Spring Boot, Spring Security, Spring Data JPA, MySQL,
 HTML/CSS/JavaScript, JUnit 5
 
 ## How to run
