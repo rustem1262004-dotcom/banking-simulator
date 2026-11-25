@@ -1,10 +1,12 @@
 package com.bank.bankingsimulator.service;
 
+import com.bank.bankingsimulator.dto.LoginRequest;
 import com.bank.bankingsimulator.dto.RegisterRequest;
 import com.bank.bankingsimulator.dto.UserResponse;
 import com.bank.bankingsimulator.entity.Role;
 import com.bank.bankingsimulator.entity.User;
 import com.bank.bankingsimulator.repository.UserRepository;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Set;
@@ -34,9 +36,23 @@ public class UserService {
         user.setFullName(request.fullName().trim());
         user.setRole(Role.CUSTOMER);
         user.setLanguage(language);
-        User saved = userRepository.save(user);
+        return toResponse(userRepository.save(user));
+    }
 
-        return new UserResponse(saved.getId(), saved.getEmail(), saved.getFullName(),
-                saved.getRole().name(), saved.getLanguage());
+    public UserResponse authenticate(LoginRequest request) {
+        User user = userRepository.findByEmail(request.email().trim().toLowerCase())
+                .filter(u -> passwordEncoder.matches(request.password(), u.getPasswordHash()))
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+        return toResponse(user);
+    }
+
+    public UserResponse getById(Long id) {
+        return userRepository.findById(id)
+                .map(this::toResponse)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    private UserResponse toResponse(User u) {
+        return new UserResponse(u.getId(), u.getEmail(), u.getFullName(), u.getRole().name(), u.getLanguage());
     }
 }
