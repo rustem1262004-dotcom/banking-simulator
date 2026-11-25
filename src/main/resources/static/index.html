@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Banking Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <b class="logo">🏦 Banking Simulator</b>
+  <nav id="nav" hidden>
+    <button data-v="accounts" data-i="accounts"></button>
+    <button data-v="transfer" data-i="transfer"></button>
+    <button data-v="history" data-i="history"></button>
+  </nav>
+  <div class="right">
+    <select id="lang" aria-label="Language">
+      <option value="kk">KZ</option><option value="ru">RU</option><option value="en">EN</option>
+    </select>
+    <button id="logout" class="alt" hidden data-i="logout"></button>
+  </div>
+</header>
+
+<main>
+  <div id="msg" role="status" hidden></div>
+
+  <!-- Вход / регистрация -->
+  <section id="auth" class="view">
+    <div class="card narrow">
+      <div class="tabs">
+        <button class="on" data-t="login" data-i="signin"></button>
+        <button data-t="reg" data-i="register"></button>
+      </div>
+      <form id="loginForm">
+        <label><span data-i="email"></span><input name="email" type="email" required autocomplete="username"></label>
+        <label><span data-i="password"></span><input name="password" type="password" required autocomplete="current-password"></label>
+        <button class="primary" data-i="signin"></button>
+      </form>
+      <form id="regForm" hidden>
+        <label><span data-i="fullName"></span><input name="fullName" required></label>
+        <label><span data-i="email"></span><input name="email" type="email" required autocomplete="username"></label>
+        <label><span data-i="password"></span><input name="password" type="password" minlength="8" required autocomplete="new-password"></label>
+        <button class="primary" data-i="register"></button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Счета -->
+  <section id="accounts" class="view" hidden>
+    <h2 id="hello"></h2>
+    <div id="accList" class="grid"></div>
+    <form id="newAcc" class="card">
+      <h3 data-i="newAccount"></h3>
+      <div class="row">
+        <label><span data-i="accName"></span><input name="name" required></label>
+        <label><span data-i="currency"></span>
+          <select name="currency"><option>KZT</option><option>USD</option><option>EUR</option></select></label>
+        <label><span data-i="initial"></span><input name="initialDeposit" type="number" step="0.01" min="0" value="0"></label>
+      </div>
+      <button class="primary" data-i="create"></button>
+    </form>
+  </section>
+
+  <!-- Перевод -->
+  <section id="transfer" class="view" hidden>
+    <form id="trForm" class="card narrow">
+      <h3 data-i="transfer"></h3>
+      <label><span data-i="from"></span><select id="trFrom" required></select></label>
+      <label><span data-i="to"></span><select id="trTo"></select></label>
+      <label><span data-i="toId"></span><input id="trToId" type="number" min="1"></label>
+      <label><span data-i="amount"></span><input id="trAmount" type="number" step="0.01" min="0.01" required></label>
+      <label><span data-i="desc"></span><input id="trDesc" maxlength="100"></label>
+      <button class="primary" data-i="send"></button>
+    </form>
+  </section>
+
+  <!-- История и выписка -->
+  <section id="history" class="view" hidden>
+    <div class="card filters">
+      <label><span data-i="account"></span><select id="hAcc"></select></label>
+      <label><span data-i="type"></span>
+        <select id="hType"><option value="" data-i="all"></option><option value="DEPOSIT" data-i="DEPOSIT"></option><option value="WITHDRAWAL" data-i="WITHDRAWAL"></option><option value="TRANSFER" data-i="TRANSFER"></option></select></label>
+      <label><span data-i="month"></span><input id="hMonth" type="month"></label>
+      <button id="printBtn" class="alt" data-i="print"></button>
+      <button id="csvBtn" class="alt" data-i="csv"></button>
+    </div>
+    <div class="card scroll">
+      <table>
+        <thead><tr><th data-i="date"></th><th data-i="type"></th><th data-i="desc"></th><th class="num" data-i="amount"></th><th data-i="status"></th></tr></thead>
+        <tbody id="txBody"></tbody>
+      </table>
+    </div>
+    <p class="sums"><span><span data-i="income"></span>: <b id="sumIn" class="in"></b></span>
+       <span><span data-i="expense"></span>: <b id="sumOut" class="out"></b></span></p>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
