@@ -10,6 +10,7 @@ import com.bank.bankingsimulator.entity.TransactionType;
 import com.bank.bankingsimulator.repository.AccountRepository;
 import com.bank.bankingsimulator.repository.CategoryRepository;
 import com.bank.bankingsimulator.repository.TransactionRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
@@ -32,16 +33,16 @@ public class TransactionService {
     }
 
     @Transactional
-    public TransactionResponse deposit(OperationRequest r) {
-        Account account = lock(r.accountId());
+    public TransactionResponse deposit(Long userId, OperationRequest r) {
+        Account account = lockOwned(r.accountId(), userId);
         account.setBalance(account.getBalance().add(r.amount()));
         accountRepository.save(account);
         return record(TransactionType.DEPOSIT, null, account, r.amount(), r.categoryId(), r.description());
     }
 
     @Transactional
-    public TransactionResponse withdraw(OperationRequest r) {
-        Account account = lock(r.accountId());
+    public TransactionResponse withdraw(Long userId, OperationRequest r) {
+        Account account = lockOwned(r.accountId(), userId);
         if (account.getBalance().compareTo(r.amount()) < 0) {
             throw new IllegalArgumentException(NO_FUNDS);
         }
@@ -52,7 +53,7 @@ public class TransactionService {
 
     // Atomic transfer: if anything fails, the whole transaction is rolled back.
     @Transactional
-    public TransactionResponse transfer(TransferRequest r) {
+    public TransactionResponse transfer(Long userId, TransferRequest r) {
         if (r.fromAccountId().equals(r.toAccountId())) {
             throw new IllegalArgumentException("Cannot transfer to the same account");
         }
@@ -62,6 +63,7 @@ public class TransactionService {
         Account from = first.getId().equals(r.fromAccountId()) ? first : second;
         Account to = from == first ? second : first;
 
+        checkOwner(from, userId);
         if (!from.getCurrency().equals(to.getCurrency())) {
             throw new IllegalArgumentException("Accounts must have the same currency");
         }
@@ -75,7 +77,11 @@ public class TransactionService {
         return record(TransactionType.TRANSFER, from, to, r.amount(), r.categoryId(), r.description());
     }
 
-    public List<TransactionResponse> history(Long accountId) {
+    @Transactional(readOnly = true)
+    public List<TransactionResponse> history(Long userId, Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+        checkOwner(account, userId);
         return transactionRepository
                 .findByFromAccountIdOrToAccountIdOrderByCreatedAtDesc(accountId, accountId)
                 .stream().map(this::toResponse).toList();
@@ -84,6 +90,18 @@ public class TransactionService {
     private Account lock(Long id) {
         return accountRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+    }
+
+    private Account lockOwned(Long id, Long userId) {
+        Account account = lock(id);
+        checkOwner(account, userId);
+        return account;
+    }
+
+    private void checkOwner(Account account, Long userId) {
+        if (!account.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("This account does not belong to you");
+        }
     }
 
     private TransactionResponse record(TransactionType type, Account from, Account to, BigDecimal amount,

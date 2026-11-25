@@ -31,8 +31,8 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountResponse create(CreateAccountRequest request) {
-        User user = userRepository.findById(request.userId())
+    public AccountResponse create(Long userId, CreateAccountRequest request) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         BigDecimal initial = request.initialDeposit() == null ? BigDecimal.ZERO : request.initialDeposit();

@@ -5,6 +5,7 @@ import com.bank.bankingsimulator.dto.CreateAccountRequest;
 import com.bank.bankingsimulator.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -20,12 +21,13 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountResponse create(@Valid @RequestBody CreateAccountRequest request) {
-        return accountService.create(request);
+    public AccountResponse create(@AuthenticationPrincipal Long userId,
+                                  @Valid @RequestBody CreateAccountRequest request) {
+        return accountService.create(userId, request);
     }
 
     @GetMapping
-    public List<AccountResponse> list(@RequestParam Long userId) {
+    public List<AccountResponse> list(@AuthenticationPrincipal Long userId) {
         return accountService.findByUser(userId);
     }
 }

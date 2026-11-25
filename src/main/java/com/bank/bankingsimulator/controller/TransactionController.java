@@ -6,6 +6,7 @@ import com.bank.bankingsimulator.dto.TransferRequest;
 import com.bank.bankingsimulator.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -21,24 +22,28 @@ public class TransactionController {
 
     @PostMapping("/deposit")
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionResponse deposit(@Valid @RequestBody OperationRequest request) {
-        return transactionService.deposit(request);
+    public TransactionResponse deposit(@AuthenticationPrincipal Long userId,
+                                       @Valid @RequestBody OperationRequest request) {
+        return transactionService.deposit(userId, request);
     }
 
     @PostMapping("/withdraw")
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionResponse withdraw(@Valid @RequestBody OperationRequest request) {
-        return transactionService.withdraw(request);
+    public TransactionResponse withdraw(@AuthenticationPrincipal Long userId,
+                                        @Valid @RequestBody OperationRequest request) {
+        return transactionService.withdraw(userId, request);
     }
 
     @PostMapping("/transfer")
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionResponse transfer(@Valid @RequestBody TransferRequest request) {
-        return transactionService.transfer(request);
+    public TransactionResponse transfer(@AuthenticationPrincipal Long userId,
+                                        @Valid @RequestBody TransferRequest request) {
+        return transactionService.transfer(userId, request);
     }
 
     @GetMapping
-    public List<TransactionResponse> history(@RequestParam Long accountId) {
-        return transactionService.history(accountId);
+    public List<TransactionResponse> history(@AuthenticationPrincipal Long userId,
+                                             @RequestParam Long accountId) {
+        return transactionService.history(userId, accountId);
     }
 }
